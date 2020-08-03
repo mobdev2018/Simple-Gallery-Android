@@ -163,7 +163,7 @@ class ViewPagerActivity : SimpleActivity(), ViewPager.OnPageChangeListener, View
             }
         } else {
             try {
-                mPath = intent.getStringExtra(PATH)
+                mPath = intent.getStringExtra(PATH).toString()
                 mShowAll = config.showAll
             } catch (e: Exception) {
                 showErrorToast(e)
@@ -173,7 +173,7 @@ class ViewPagerActivity : SimpleActivity(), ViewPager.OnPageChangeListener, View
         }
 
         if (intent.extras?.containsKey(REAL_FILE_PATH) == true) {
-            mPath = intent.extras.getString(REAL_FILE_PATH)
+            mPath = intent.extras!!.getString(REAL_FILE_PATH).toString()
         }
 
         if (mPath.isEmpty()) {
@@ -763,7 +763,7 @@ class ViewPagerActivity : SimpleActivity(), ViewPager.OnPageChangeListener, View
         }
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration?) {
+    override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         measureScreen()
     }

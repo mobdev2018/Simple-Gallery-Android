@@ -234,7 +234,7 @@ class MainActivity : SimpleActivity(), DirectoryAdapter.DirOperationsListener {
     }
 
     private fun removeTempFolder() {
-        if (config.tempFolderPath.isNotEmpty()) {
+        if (config.tempFolderPath?.isNotEmpty()!!) {
             val newFolder = File(config.tempFolderPath)
             if (newFolder.exists() && newFolder.isDirectory) {
                 if (newFolder.list()?.isEmpty() == true) {
@@ -464,10 +464,10 @@ class MainActivity : SimpleActivity(), DirectoryAdapter.DirOperationsListener {
     private fun isGetContentIntent(intent: Intent) = intent.action == Intent.ACTION_GET_CONTENT && intent.type != null
 
     private fun isGetImageContentIntent(intent: Intent) = isGetContentIntent(intent) &&
-            (intent.type.startsWith("image/") || intent.type == MediaStore.Images.Media.CONTENT_TYPE)
+            (intent.type!!.startsWith("image/") || intent.type == MediaStore.Images.Media.CONTENT_TYPE)
 
     private fun isGetVideoContentIntent(intent: Intent) = isGetContentIntent(intent) &&
-            (intent.type.startsWith("video/") || intent.type == MediaStore.Video.Media.CONTENT_TYPE)
+            (intent.type!!.startsWith("video/") || intent.type == MediaStore.Video.Media.CONTENT_TYPE)
 
     private fun isGetAnyContentIntent(intent: Intent) = isGetContentIntent(intent) && intent.type == "*/*"
 
@@ -506,14 +506,16 @@ class MainActivity : SimpleActivity(), DirectoryAdapter.DirOperationsListener {
     }
 
     private fun fillExtraOutput(resultData: Intent) {
-        val path = resultData.data.path
+        val path = resultData.data?.path
         var inputStream: InputStream? = null
         var outputStream: OutputStream? = null
         try {
-            val output = intent.extras.get(MediaStore.EXTRA_OUTPUT) as Uri
+            val output = intent.extras?.get(MediaStore.EXTRA_OUTPUT) as Uri
             inputStream = FileInputStream(File(path))
             outputStream = contentResolver.openOutputStream(output)
-            inputStream.copyTo(outputStream)
+            if (outputStream != null) {
+                inputStream.copyTo(outputStream)
+            }
         } catch (e: SecurityException) {
             showErrorToast(e)
         } catch (ignored: FileNotFoundException) {
@@ -524,8 +526,8 @@ class MainActivity : SimpleActivity(), DirectoryAdapter.DirOperationsListener {
     }
 
     private fun fillPickedPaths(resultData: Intent, resultIntent: Intent) {
-        val paths = resultData.extras.getStringArrayList(PICKED_PATHS)
-        val uris = paths.map { getFilePublicUri(File(it), BuildConfig.APPLICATION_ID) } as ArrayList
+        val paths = resultData.extras?.getStringArrayList(PICKED_PATHS)
+        val uris = paths?.map { getFilePublicUri(File(it), BuildConfig.APPLICATION_ID) } as ArrayList
         val clipData = ClipData("Attachment", arrayOf("image/*", "video/*"), ClipData.Item(uris.removeAt(0)))
 
         uris.forEach {
@@ -537,9 +539,9 @@ class MainActivity : SimpleActivity(), DirectoryAdapter.DirOperationsListener {
     }
 
     private fun fillIntentPath(resultData: Intent, resultIntent: Intent) {
-        val path = resultData.data.path
+        val path = resultData.data?.path
         val uri = getFilePublicUri(File(path), BuildConfig.APPLICATION_ID)
-        val type = path.getMimeType()
+        val type = path?.getMimeType()
         resultIntent.setDataAndTypeAndNormalize(uri, type)
         resultIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
@@ -596,7 +598,7 @@ class MainActivity : SimpleActivity(), DirectoryAdapter.DirOperationsListener {
     }
 
     private fun storeDirectories() {
-        if (!config.temporarilyShowHidden && config.tempFolderPath.isEmpty()) {
+        if (!config.temporarilyShowHidden && config.tempFolderPath!!.isEmpty()) {
             val directories = Gson().toJson(mDirs)
             config.directories = directories
         }
@@ -648,7 +650,7 @@ class MainActivity : SimpleActivity(), DirectoryAdapter.DirOperationsListener {
     private fun setupLatestMediaId() {
         Thread {
             if (hasPermission(PERMISSION_READ_STORAGE)) {
-                mLatestMediaId = getLatestMediaId()
+                mLatestMediaId = 0L //getLatestMediaId()
             }
         }.start()
     }
@@ -661,7 +663,7 @@ class MainActivity : SimpleActivity(), DirectoryAdapter.DirOperationsListener {
         mLastMediaHandler.removeCallbacksAndMessages(null)
         mLastMediaHandler.postDelayed({
             Thread {
-                val mediaId = getLatestMediaId()
+                val mediaId = 0L //getLatestMediaId()
                 if (mLatestMediaId != mediaId) {
                     mLatestMediaId = mediaId
                     runOnUiThread {

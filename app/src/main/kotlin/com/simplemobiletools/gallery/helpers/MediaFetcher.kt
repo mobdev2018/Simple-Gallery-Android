@@ -93,7 +93,7 @@ class MediaFetcher(val context: Context) {
 
             return try {
                 val cur = context.contentResolver.query(uri, projection, selection, selectionArgs, getSortingForFolder(curPath))
-                parseCursor(context, cur, isPickImage, isPickVideo, curPath, allowRecursion)
+                parseCursor(context, cur!!, isPickImage, isPickVideo, curPath, allowRecursion)
             } catch (e: Exception) {
                 ArrayList()
             }

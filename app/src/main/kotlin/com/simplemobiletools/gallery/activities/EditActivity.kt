@@ -56,7 +56,7 @@ class EditActivity : SimpleActivity(), CropImageView.OnCropImageCompleteListener
             return
         }
 
-        uri = intent.data
+        uri = intent.data!!
         if (uri.scheme != "file" && uri.scheme != "content") {
             toast(R.string.unknown_file_location)
             finish()
@@ -65,8 +65,8 @@ class EditActivity : SimpleActivity(), CropImageView.OnCropImageCompleteListener
 
         saveUri = when {
             intent.extras?.containsKey(REAL_FILE_PATH) == true -> {
-                val realPath = intent.extras.getString(REAL_FILE_PATH)
-                if (realPath.startsWith(OTG_PATH)) {
+                val realPath = intent.extras?.getString(REAL_FILE_PATH)
+                if (realPath!!.startsWith(OTG_PATH)) {
                     Uri.parse(realPath)
                 } else {
                     Uri.fromFile(File(realPath))
@@ -155,7 +155,7 @@ class EditActivity : SimpleActivity(), CropImageView.OnCropImageCompleteListener
         if (result.error == null) {
             if (isCropIntent) {
                 if (saveUri.scheme == "file") {
-                    saveBitmapToFile(result.bitmap, saveUri.path)
+                    saveBitmapToFile(result.bitmap, saveUri.path!!)
                 } else {
                     var inputStream: InputStream? = null
                     var outputStream: OutputStream? = null
@@ -164,7 +164,9 @@ class EditActivity : SimpleActivity(), CropImageView.OnCropImageCompleteListener
                         result.bitmap.compress(CompressFormat.JPEG, 100, stream)
                         inputStream = ByteArrayInputStream(stream.toByteArray())
                         outputStream = contentResolver.openOutputStream(saveUri)
-                        inputStream.copyTo(outputStream)
+                        if (outputStream != null) {
+                            inputStream.copyTo(outputStream)
+                        }
                     } finally {
                         inputStream?.close()
                         outputStream?.close()
@@ -177,7 +179,7 @@ class EditActivity : SimpleActivity(), CropImageView.OnCropImageCompleteListener
                     finish()
                 }
             } else if (saveUri.scheme == "file") {
-                SaveAsDialog(this, saveUri.path, true) {
+                SaveAsDialog(this, saveUri.path!!, true) {
                     saveBitmapToFile(result.bitmap, it)
                 }
             } else if (saveUri.scheme == "content") {

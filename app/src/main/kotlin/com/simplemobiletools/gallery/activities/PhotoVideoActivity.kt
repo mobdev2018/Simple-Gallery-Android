@@ -59,22 +59,24 @@ open class PhotoVideoActivity : SimpleActivity(), ViewPagerFragment.FragmentList
     private fun checkIntent(savedInstanceState: Bundle? = null) {
         mUri = intent.data ?: return
         if (intent.extras?.containsKey(REAL_FILE_PATH) == true) {
-            val realPath = intent.extras.getString(REAL_FILE_PATH)
-            sendViewPagerIntent(realPath)
+            val realPath = intent.extras?.getString(REAL_FILE_PATH)
+            if (realPath != null) {
+                sendViewPagerIntent(realPath)
+            }
             finish()
             return
         }
 
         mIsFromGallery = intent.getBooleanExtra(IS_FROM_GALLERY, false)
         if (mUri!!.scheme == "file") {
-            scanPath(mUri!!.path)
-            sendViewPagerIntent(mUri!!.path)
+            scanPath(mUri!!.path!!)
+            mUri!!.path?.let { sendViewPagerIntent(it) }
             finish()
             return
         } else {
             val path = applicationContext.getRealPathFromURI(mUri!!) ?: ""
             if (path != mUri.toString() && path.isNotEmpty() && mUri!!.authority != "mms") {
-                scanPath(mUri!!.path)
+                mUri!!.path?.let { scanPath(it) }
                 sendViewPagerIntent(path)
                 finish()
                 return
@@ -149,7 +151,7 @@ open class PhotoVideoActivity : SimpleActivity(), ViewPagerFragment.FragmentList
     }
 
     private fun showProperties() {
-        PropertiesDialog(this, mUri!!.path)
+        mUri!!.path?.let { PropertiesDialog(this, it) }
     }
 
     override fun fragmentClicked() {

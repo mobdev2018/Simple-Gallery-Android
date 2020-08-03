@@ -17,7 +17,7 @@ import com.simplemobiletools.gallery.extensions.getFileSignature
 
 class GlideDecoder : ImageDecoder {
     override fun decode(context: Context, uri: Uri): Bitmap {
-        val exif = android.media.ExifInterface(uri.path)
+        val exif = android.media.ExifInterface(uri.path!!)
         val orientation = exif.getAttributeInt(android.media.ExifInterface.TAG_ORIENTATION, android.media.ExifInterface.ORIENTATION_NORMAL)
 
         val targetWidth = if (ViewPagerActivity.screenWidth == 0) Target.SIZE_ORIGINAL else ViewPagerActivity.screenWidth
@@ -25,7 +25,7 @@ class GlideDecoder : ImageDecoder {
 
         ViewPagerActivity.wasDecodedByGlide = true
         val options = RequestOptions()
-                .signature(uri.path.getFileSignature())
+                .signature(uri.path!!.getFileSignature())
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .override(targetWidth, targetHeight)
 

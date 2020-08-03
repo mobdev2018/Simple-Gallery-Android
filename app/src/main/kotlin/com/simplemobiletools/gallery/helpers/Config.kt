@@ -55,7 +55,7 @@ class Config(context: Context) : BaseConfig(context) {
         set(isThirdPartyIntent) = prefs.edit().putBoolean(IS_THIRD_PARTY_INTENT, isThirdPartyIntent).apply()
 
     var pinnedFolders: Set<String>
-        get() = prefs.getStringSet(PINNED_FOLDERS, HashSet<String>())
+        get() = prefs.getStringSet(PINNED_FOLDERS, HashSet<String>()) as Set<String>
         set(pinnedFolders) = prefs.edit().putStringSet(PINNED_FOLDERS, pinnedFolders).apply()
 
     var showAll: Boolean
@@ -91,7 +91,7 @@ class Config(context: Context) : BaseConfig(context) {
     }
 
     var excludedFolders: MutableSet<String>
-        get() = prefs.getStringSet(EXCLUDED_FOLDERS, getDataFolder())
+        get() = prefs.getStringSet(EXCLUDED_FOLDERS, getDataFolder()) as MutableSet<String>
         set(excludedFolders) = prefs.edit().remove(EXCLUDED_FOLDERS).putStringSet(EXCLUDED_FOLDERS, excludedFolders).apply()
 
     private fun getDataFolder(): Set<String> {
@@ -115,7 +115,7 @@ class Config(context: Context) : BaseConfig(context) {
     }
 
     var includedFolders: MutableSet<String>
-        get() = prefs.getStringSet(INCLUDED_FOLDERS, HashSet<String>())
+        get() = prefs.getStringSet(INCLUDED_FOLDERS, HashSet<String>()) as MutableSet<String>
         set(includedFolders) = prefs.edit().remove(INCLUDED_FOLDERS).putStringSet(INCLUDED_FOLDERS, includedFolders).apply()
 
     fun saveFolderMedia(path: String, json: String) {
@@ -220,11 +220,11 @@ class Config(context: Context) : BaseConfig(context) {
     private fun getDefaultMediaColumnCount() = context.resources.getInteger(if (scrollHorizontally) R.integer.media_columns_horizontal_scroll
     else R.integer.media_columns_vertical_scroll)
 
-    var directories: String
+    var directories: String?
         get() = prefs.getString(DIRECTORIES, "")
         set(directories) = prefs.edit().putString(DIRECTORIES, directories).apply()
 
-    var albumCovers: String
+    var albumCovers: String?
         get() = prefs.getString(ALBUM_COVERS, "")
         set(albumCovers) = prefs.edit().putString(ALBUM_COVERS, albumCovers).apply()
 
@@ -289,7 +289,7 @@ class Config(context: Context) : BaseConfig(context) {
         get() = prefs.getBoolean(SLIDESHOW_LOOP, false)
         set(loopSlideshow) = prefs.edit().putBoolean(SLIDESHOW_LOOP, loopSlideshow).apply()
 
-    var tempFolderPath: String
+    var tempFolderPath: String?
         get() = prefs.getString(TEMP_FOLDER_PATH, "")
         set(tempFolderPath) = prefs.edit().putString(TEMP_FOLDER_PATH, tempFolderPath).apply()
 

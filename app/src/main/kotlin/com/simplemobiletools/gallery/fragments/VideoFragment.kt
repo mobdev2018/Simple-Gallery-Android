@@ -277,6 +277,7 @@ class VideoFragment : ViewPagerFragment(), SurfaceHolder.Callback, SeekBar.OnSee
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     private fun togglePlayPause() {
         if (activity == null || !isAdded)
             return
@@ -309,6 +310,7 @@ class VideoFragment : ViewPagerFragment(), SurfaceHolder.Callback, SeekBar.OnSee
         activity!!.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     private fun initMediaPlayer() {
         if (mMediaPlayer != null || !mIsFragmentVisible) {
             return
@@ -317,7 +319,7 @@ class VideoFragment : ViewPagerFragment(), SurfaceHolder.Callback, SeekBar.OnSee
         val mediumPath = if (wasEncoded) mEncodedPath else getPathToLoad(medium)
         try {
             mMediaPlayer = MediaPlayer().apply {
-                setDataSource(context, Uri.parse(mediumPath))
+                context?.let { setDataSource(it, Uri.parse(mediumPath)) }
                 setDisplay(mSurfaceHolder)
                 setOnCompletionListener { videoCompleted() }
                 setOnVideoSizeChangedListener { mediaPlayer, width, height -> setVideoSize() }

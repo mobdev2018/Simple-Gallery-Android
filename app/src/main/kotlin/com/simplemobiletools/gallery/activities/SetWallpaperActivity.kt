@@ -42,7 +42,7 @@ class SetWallpaperActivity : SimpleActivity(), CropImageView.OnCropImageComplete
     }
 
     private fun handleImage(intent: Intent) {
-        uri = intent.data
+        uri = intent.data!!
         if (uri.scheme != "file" && uri.scheme != "content") {
             toast(R.string.unknown_file_location)
             finish()
